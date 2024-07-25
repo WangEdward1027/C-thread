@@ -17,7 +17,7 @@ mutex mtx;//创建互斥锁的对象
 class MutexLockGuard
 {
 public:
-    MutexLockGuard(mutex &metx)
+    MutexLockGuard(mutex &metx)  //引用
     : _mtx(metx)
     {
         _mtx.lock();//在构造函数中上锁
@@ -28,13 +28,14 @@ public:
         _mtx.unlock();//在析构函数中进行解锁
     }
 private:
-    mutex &_mtx;
+    mutex &_mtx;  //引用
 };
 
 void threadFunc()
 {
     for(size_t idx = 0; idx < 10000000; ++idx)
     {
+    	//创建MutexLockGuard类的栈对象,生命周期结束时自动析构,解锁
         MutexLockGuard autoLock(mtx);
         ++gCnt;
     }
