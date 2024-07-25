@@ -1,4 +1,4 @@
-//线程的创建
+//线程的创建1:传递普通函数
 //get_id():获取线程id
 
 #include <iostream> 
