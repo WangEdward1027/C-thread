@@ -25,7 +25,7 @@ public:
     void push(const int &value);
     int  pop();
     bool empty() const;
-    bool full() const;
+    bool full()  const;
 
 private:
     size_t _capacity; //仓库容量
@@ -58,7 +58,7 @@ void TaskQueue::push(const int &value)
         _notFull.wait(ul);
     }
     _que.push(value);
-    ul.unlock();           //解锁:控制锁的粒度
+    ul.unlock(); //解锁:控制锁的粒度,只在判满和queue.push()之间加锁
     _notEmpty.notify_one();//唤醒消费者
 }
 
@@ -70,7 +70,7 @@ int TaskQueue::pop()
     }
     int tmp = _que.front();
     _que.pop();
-    ul.unlock();          //解锁
+    ul.unlock(); //解锁:控制锁的粒度,只在判空和queue.pop()之间加锁
     _notFull.notify_one();//唤醒生产者
     return tmp;
 }
@@ -86,10 +86,6 @@ bool TaskQueue::full() const
     return _capacity == _que.size();
 }
 
-void produceThreadFunc()
-{
-    
-}
 
 //生产者:生产商品
 class Producer
@@ -101,7 +97,8 @@ public:
 
     void produce(TaskQueue &taskQueue)
     {
-        ::srand(::clock());
+        //全局作用域解析运算符:确保调用的是全局命名空间中的srand和clock
+        ::srand(::clock());         
         int cnt = 20;
         while(cnt--){
             int number = ::rand() % 100; //产生随机数
@@ -138,7 +135,7 @@ int main()
     Consumer consumer1;  //消费者1
     Consumer consumer2;  //消费者2
     
-    thread pro(&Producer::produce, &producer, std::ref(taskque));
+    thread  pro(&Producer::produce, &producer,  std::ref(taskque));
     thread con1(&Consumer::consume, &consumer1, std::ref(taskque));   
     thread con2(&Consumer::consume, &consumer2, std::ref(taskque));   
 
