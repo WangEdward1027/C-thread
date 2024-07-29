@@ -9,7 +9,7 @@ using std::queue;
 using std::mutex;
 using std::condition_variable;
 
-class Task; //前向声明:使用了别的类的指针或引用
+class Task; //前向声明:仅使用了别的类的指针或引用
 
 using ElemType = Task *;
 

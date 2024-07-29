@@ -9,7 +9,7 @@ ThreadPool::ThreadPool(size_t threadNum, size_t queSize)
 : _threadNum(threadNum)
 , _threads()
 , _queSize(queSize)
-, _taskQue(queSize) //怎么初始化
+, _taskQue(queSize) 
 , _isExit(false)
 {
     
